@@ -167,10 +167,10 @@ public class HttpManager {
                 else
                     callback.onSuccess(resultObject, this.ResponseHeaders, this.responseCode);
             } catch (Exception e) {
-                log.debug(TAG + " -> " + e.getMessage());
+                log.info(TAG + " -> " + e.getMessage());
             }
         }
-        log.debug(TAG + " -> " + "Finalizando petición;Disconnecting Connection");
+        log.info(TAG + " -> " + "Finalizando petición;Disconnecting Connection");
         this.httpConnection.disconnect();
         return resultObject;
     }
@@ -186,7 +186,7 @@ public class HttpManager {
             this.httpConnection.setRequestMethod(method);
             this.httpConnection.setConnectTimeout(TIME_OUT);
             this.httpConnection.setDoInput(true);//Permitir recepcion de datos
-            log.debug(TAG + " -> " + "Response Detail: URL [ " + this.url + " ] Method [ " + method + " ]\n  timeout time [ "
+            log.info(TAG + " -> " + "Response Detail: URL [ " + this.url + " ] Method [ " + method + " ]\n  timeout time [ "
                     + TIME_OUT + " ] responseType [ " + this.responseClass.getSimpleName() + " ]\n ");
 
 
@@ -212,7 +212,7 @@ public class HttpManager {
                     dos.flush();
                     dos.close();
 
-                    log.debug(TAG + " -> " + "Content-Type [ " +
+                    log.info(TAG + " -> " + "Content-Type [ " +
                             this.httpConnection.getContentType() + " ].");
 
                 }
@@ -258,7 +258,7 @@ public class HttpManager {
                 response.setContentType(this.httpConnection.getContentType());
                 result = response;
 
-                log.debug(TAG + " -> " + "Tipo de dato a retornar: Stream");
+                log.info(TAG + " -> " + "Tipo de dato a retornar: Stream");
 
             } else {
 
@@ -272,7 +272,7 @@ public class HttpManager {
 
                 if (this.bReader != null) {
                     serverMessage = HttpManagerUtils.frombufferReader(this.bReader);
-                    log.debug(TAG + " -> " + "Respuesta del servidor: " + serverMessage);
+                    log.info(TAG + " -> " + "Respuesta del servidor: " + serverMessage);
                     //Si la peticion retornó error
                     if (!isSuccess) {
                         throw new HttpManagerInternalException(serverMessage);
@@ -285,10 +285,10 @@ public class HttpManager {
                         result = serverMessage;
                     } else if (this.isArrayResponse) {
                         result = HttpManagerConverterFactory.DeserializeArray(responseClass, serverMessage);
-                        log.debug(TAG + " -> " + "Tipo de dato a retornar: List<" + ((Class) responseClass).getName() + ">");
+                        log.info(TAG + " -> " + "Tipo de dato a retornar: List<" + ((Class) responseClass).getName() + ">");
                     } else {
                         result = HttpManagerConverterFactory.DeserializeObject(responseClass, serverMessage);
-                        log.debug(TAG + " -> " + "Tipo de dato a retornar: " + ((Class) responseClass).getName());
+                        log.info(TAG + " -> " + "Tipo de dato a retornar: " + ((Class) responseClass).getName());
                     }
                 }
             }
@@ -306,7 +306,7 @@ public class HttpManager {
         }
         this.RequestHeaders.put(key, value);
 
-        log.debug(TAG + " -> " + "Agregando header: " + key + " valor:" + value);
+        log.info(TAG + " -> " + "Agregando header: " + key + " valor:" + value);
         return this;
     }
 

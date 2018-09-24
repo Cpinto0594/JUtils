@@ -28,7 +28,7 @@ public class HttpManagerConverterFactory {
         try {
             result = converter.DeserializeObject(clazz, values);
         } catch (Exception e) {
-            log.debug(TAG + " -> " + "Unable to convert data to desired class -> " + clazz.getSimpleName());
+            log.info(TAG + " -> " + "Unable to convert data to desired class -> " + clazz.getSimpleName());
         }
         return (T) result;
     }
@@ -39,7 +39,7 @@ public class HttpManagerConverterFactory {
         try {
             result = converter.DeserializeArray(clazz, values);
         } catch (Exception e) {
-            log.debug(TAG + " -> " + "Unable to convert data to desired list of class -> " + clazz.getSimpleName());
+            log.info(TAG + " -> " + "Unable to convert data to desired list of class -> " + clazz.getSimpleName());
         }
 
         return (List<T>) result;
@@ -54,7 +54,7 @@ public class HttpManagerConverterFactory {
         try {
             result = converter.SerializeObject(values);
         } catch (Exception e) {
-            log.debug(TAG + " -> " + "Unable to convert data to String");
+            log.info(TAG + " -> " + "Unable to convert data to String");
         }
         return (String) result;
     }

@@ -26,10 +26,6 @@ public class MyClass {
                 System.out.println("Result " + resultValue.toString());
             }
         });
-        Logger log = LoggerFactory.getLogger(MyClass.class);
-        log.debug("Hola");
-        log.info("Hola");
-        log.warn("Hola");
     }
 
     public static class NotificationData {
