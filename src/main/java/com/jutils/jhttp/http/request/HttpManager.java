@@ -166,7 +166,7 @@ public class HttpManager {
                     callback.onSuccess(resultObject, this.ResponseHeaders, this.responseCode);
                 }
             } catch (Exception e) {
-                log.info(TAG + " -> " + e.getMessage());
+                log.error(TAG + " -> " + e.getMessage());
             }
         }
         log.info(TAG + " -> " + "Finalizando petición;Disconnecting Connection");
