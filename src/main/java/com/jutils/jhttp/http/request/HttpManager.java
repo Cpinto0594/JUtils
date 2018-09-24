@@ -24,11 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * Created by CarlosP on 23/5/2017.
  */
-
 public class HttpManager {
 
     private final String HEAD = "HEAD";
@@ -53,8 +51,7 @@ public class HttpManager {
     private Class<?> responseClass = String.class;
     private boolean isArrayResponse;
 
-
-    private  Logger log = LoggerFactory.getLogger(HttpManager.class);
+    private Logger log = LoggerFactory.getLogger(HttpManager.class);
 
     public HttpManager() {
     }
@@ -149,9 +146,10 @@ public class HttpManager {
             if (callback != null) {
                 //Si se retorna falso en el beforeSend callback detenemos la peticion
                 boolean beforeSend = callback.onBeforeSend(this.RequestHeaders);
-                if (!beforeSend) return null;
+                if (!beforeSend) {
+                    return null;
+                }
             }
-
 
             //Realizamos el proceso y devolvemos el valor para enviar a los callback
             resultObject = MakeRequest(method);
@@ -162,10 +160,11 @@ public class HttpManager {
         //Ejecutamos los callback
         if (callback != null) {
             try {
-                if (this.responseCode != HttpURLConnection.HTTP_ACCEPTED && this.responseCode != HttpURLConnection.HTTP_OK)
+                if (this.responseCode != HttpURLConnection.HTTP_ACCEPTED && this.responseCode != HttpURLConnection.HTTP_OK) {
                     callback.onError(exp, this.ResponseHeaders);
-                else
+                } else {
                     callback.onSuccess(resultObject, this.ResponseHeaders, this.responseCode);
+                }
             } catch (Exception e) {
                 log.info(TAG + " -> " + e.getMessage());
             }
@@ -186,19 +185,21 @@ public class HttpManager {
             this.httpConnection.setRequestMethod(method);
             this.httpConnection.setConnectTimeout(TIME_OUT);
             this.httpConnection.setDoInput(true);//Permitir recepcion de datos
-            log.info(TAG + " -> " + "Response Detail: URL [ " + this.url + " ] Method [ " + method + " ]\n  timeout time [ "
+            log.info(TAG + " -> " + "Request Detail: URL [ " + this.url + " ] Method [ " + method + " ]\n  timeout time [ "
                     + TIME_OUT + " ] responseType [ " + this.responseClass.getSimpleName() + " ]\n ");
-
 
             //Agregamos los headers a la petición
             fillRequestWithHeaders();
             //Convertimos los parametros enviados a string para enviarlos en la peticion
             Object valueToRequest = HttpManagerUtils.convertParamsToValue(params);
+            log.info(TAG + " -> Parámetros: " + valueToRequest);
+            
             if (!HttpManagerUtils.isEmpty(valueToRequest)) {
                 if (!method.equals(this.GET)) {
                     //Si no es una entidad de tipo nativa como Integer,Double... etc, Agregar serializado a la peticion
-                    if (params != null && !HttpManagerUtils.isPrimitiveOrPrimitiveWrapperOrString(params.getClass()))
+                    if (params != null && !HttpManagerUtils.isPrimitiveOrPrimitiveWrapperOrString(params.getClass())) {
                         this.httpConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                    }
 
                     this.httpConnection.setDoOutput(true);//Permitir envio de datos
 
@@ -212,8 +213,8 @@ public class HttpManager {
                     dos.flush();
                     dos.close();
 
-                    log.info(TAG + " -> " + "Content-Type [ " +
-                            this.httpConnection.getContentType() + " ].");
+                    log.info(TAG + " -> " + "Content-Type [ "
+                            + this.httpConnection.getContentType() + " ].");
 
                 }
             }
@@ -233,7 +234,6 @@ public class HttpManager {
             this.responseMessage = this.httpConnection.getResponseMessage();
             boolean isSuccess = HttpURLConnection.HTTP_OK <= this.responseCode
                     && this.responseCode <= 299;
-
 
             //Obtenemos los Headers
             getHeadersFromResponse();
@@ -300,7 +300,9 @@ public class HttpManager {
 
     //Agregar header y value al array de headers para la peticion
     public HttpManager setHeader(String key, String value) {
-        if (HttpManagerUtils.isEmpty(this.RequestHeaders)) this.RequestHeaders = new HashMap<>();
+        if (HttpManagerUtils.isEmpty(this.RequestHeaders)) {
+            this.RequestHeaders = new HashMap<>();
+        }
         if (this.RequestHeaders.get(key) != null) {
             this.RequestHeaders.remove(key);
         }
@@ -314,8 +316,9 @@ public class HttpManager {
     private void initConfigurationVariables(String method) throws Exception {
         try {
             //Si no se especificó url, finalizamos la peticion
-            if (HttpManagerUtils.isEmpty(this.url))
+            if (HttpManagerUtils.isEmpty(this.url)) {
                 throw new HttpManagerInternalException("Url Param not defined");
+            }
 
             //Si hay parametros y es una peticion GET, armamos la url
             if (this.params != null && method == this.GET) {
@@ -336,18 +339,16 @@ public class HttpManager {
         }
     }
 
-
     //Tomamos los headers que nos regresó la peticion
     private void getHeadersFromResponse() throws IOException {
 
-        if (!HttpManagerUtils.isEmpty(this.httpConnection) &&
-                (this.responseCode == HttpURLConnection.HTTP_CREATED
-                        || this.responseCode == HttpURLConnection.HTTP_OK)) {
+        if (!HttpManagerUtils.isEmpty(this.httpConnection)
+                && (this.responseCode == HttpURLConnection.HTTP_CREATED
+                || this.responseCode == HttpURLConnection.HTTP_OK)) {
 
             this.ResponseHeaders = getHeaders(this.httpConnection);
         }
     }
-
 
     private static HttpHeaders getHeaders(HttpURLConnection conection) {
         Map<String, List<String>> headers = conection.getHeaderFields();
@@ -418,17 +419,18 @@ public class HttpManager {
         return cookiesList;
     }
 
-
     //Agregamos los headers a la peticion
     private void fillRequestWithHeaders() {
-        if (!HttpManagerUtils.isEmpty(this.RequestHeaders))
+        if (!HttpManagerUtils.isEmpty(this.RequestHeaders)) {
             for (Map.Entry<String, String> keyPair : this.RequestHeaders.entrySet()) {
                 this.httpConnection.setRequestProperty(keyPair.getKey(), keyPair.getValue());
             }
-        if (!HttpManagerUtils.isEmpty(_StaticRequestHeaders))
+        }
+        if (!HttpManagerUtils.isEmpty(_StaticRequestHeaders)) {
             for (Map.Entry<String, String> keyPair : this._StaticRequestHeaders.entrySet()) {
                 this.httpConnection.setRequestProperty(keyPair.getKey(), keyPair.getValue());
             }
+        }
     }
 
     public static void setRequestHeader(String key, String value) {
@@ -450,11 +452,7 @@ public class HttpManager {
     }
 
     //Setters and Getters
-
-
     public HttpHeaders getResponseHeaders() {
         return ResponseHeaders;
     }
 }
-
-
