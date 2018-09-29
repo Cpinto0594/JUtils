@@ -192,7 +192,10 @@ public class HttpManager {
             //Agregamos los headers a la petición
             fillRequestWithHeaders();
             //Convertimos los parametros enviados a string para enviarlos en la peticion
-            Object valueToRequest = HttpManagerUtils.convertParamsToValue(params);
+            Object valueToRequest = null;
+            if (params != null) {
+                valueToRequest = HttpManagerUtils.convertParamsToValue(params);
+            }
 
             if (!HttpManagerUtils.isEmpty(valueToRequest)) {
                 if (!method.equals(this.GET)) {
