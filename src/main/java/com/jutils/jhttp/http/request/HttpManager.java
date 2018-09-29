@@ -155,6 +155,7 @@ public class HttpManager {
             resultObject = MakeRequest(method);
 
         } catch (Exception e) {
+            log.error(TAG + " -> " + "Error: " + e.getLocalizedMessage());
             exp = e;
         }
         //Ejecutamos los callback
@@ -169,7 +170,7 @@ public class HttpManager {
                 log.error(TAG + " -> " + e.getMessage());
             }
         }
-        log.info(TAG + " -> " + "Finalizando petición;Disconnecting Connection");
+        log.debug(TAG + " -> " + "Finalizando petición; Disconnecting Connection");
         this.httpConnection.disconnect();
         return resultObject;
     }
@@ -185,14 +186,14 @@ public class HttpManager {
             this.httpConnection.setRequestMethod(method);
             this.httpConnection.setConnectTimeout(TIME_OUT);
             this.httpConnection.setDoInput(true);//Permitir recepcion de datos
-            log.info(TAG + " -> " + "Request Detail: URL [ " + this.url + " ] Method [ " + method + " ]\n  timeout time [ "
+            log.debug(TAG + " -> " + "Request Detail: URL [ " + this.url + " ] Method [ " + method + " ]\n  timeout time [ "
                     + TIME_OUT + " ] responseType [ " + this.responseClass.getSimpleName() + " ]\n ");
 
             //Agregamos los headers a la petición
             fillRequestWithHeaders();
             //Convertimos los parametros enviados a string para enviarlos en la peticion
             Object valueToRequest = HttpManagerUtils.convertParamsToValue(params);
-            
+
             if (!HttpManagerUtils.isEmpty(valueToRequest)) {
                 if (!method.equals(this.GET)) {
                     //Si no es una entidad de tipo nativa como Integer,Double... etc, Agregar serializado a la peticion
@@ -212,7 +213,7 @@ public class HttpManager {
                     dos.flush();
                     dos.close();
 
-                    log.info(TAG + " -> " + "Content-Type [ "
+                    log.debug(TAG + " -> " + "Content-Type [ "
                             + this.httpConnection.getContentType() + " ].");
 
                 }
@@ -257,7 +258,7 @@ public class HttpManager {
                 response.setContentType(this.httpConnection.getContentType());
                 result = response;
 
-                log.info(TAG + " -> " + "Tipo de dato a retornar: Stream");
+                log.debug(TAG + " -> " + "Tipo de dato a retornar: Stream");
 
             } else {
 
@@ -271,9 +272,10 @@ public class HttpManager {
 
                 if (this.bReader != null) {
                     serverMessage = HttpManagerUtils.frombufferReader(this.bReader);
-                    log.info(TAG + " -> " + "Respuesta del servidor: " + serverMessage);
+                    log.debug(TAG + " -> " + "Respuesta del servidor: " + serverMessage);
                     //Si la peticion retornó error
                     if (!isSuccess) {
+                        log.error(TAG + " -> " + "Not success answer from server");
                         throw new HttpManagerInternalException(serverMessage);
                     }
                 }
@@ -284,10 +286,10 @@ public class HttpManager {
                         result = serverMessage;
                     } else if (this.isArrayResponse) {
                         result = HttpManagerConverterFactory.DeserializeArray(responseClass, serverMessage);
-                        log.info(TAG + " -> " + "Tipo de dato a retornar: List<" + ((Class) responseClass).getName() + ">");
+                        log.debug(TAG + " -> " + "Tipo de dato a retornar: List<" + ((Class) responseClass).getName() + ">");
                     } else {
                         result = HttpManagerConverterFactory.DeserializeObject(responseClass, serverMessage);
-                        log.info(TAG + " -> " + "Tipo de dato a retornar: " + ((Class) responseClass).getName());
+                        log.debug(TAG + " -> " + "Tipo de dato a retornar: " + ((Class) responseClass).getName());
                     }
                 }
             }
@@ -307,7 +309,7 @@ public class HttpManager {
         }
         this.RequestHeaders.put(key, value);
 
-        log.info(TAG + " -> " + "Agregando header: " + key + " valor:" + value);
+        log.debug(TAG + " -> " + "Agregando header: " + key + " valor:" + value);
         return this;
     }
 
