@@ -215,10 +215,6 @@ public class HttpManager {
                     oStream.close();//Cerramos el stream
                     dos.flush();
                     dos.close();
-
-                    log.debug(TAG + " -> " + "Content-Type [ "
-                            + this.httpConnection.getContentType() + " ].");
-
                 }
             }
             return convertResponseToResult();
@@ -249,20 +245,17 @@ public class HttpManager {
                 byte[] resultBytes = {};
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                int readed = inputStream.read();
-                while (readed != -1) {
+                int readed = 0;
+                while ((readed = inputStream.read(resultBytes)) != -1) {
                     baos.write(readed);
-                    readed = inputStream.read();
                 }
                 resultBytes = baos.toByteArray();
-
                 HttpResponseStream response = new HttpResponseStream(resultBytes, resultBytes.length);
                 response.setIstream(inputStream);
                 response.setContentType(this.httpConnection.getContentType());
                 result = response;
 
-                log.debug(TAG + " -> " + "Tipo de dato a retornar: Stream");
-
+//                log.debug(TAG + " -> " + "Tipo de dato a retornar: Stream");
             } else {
 
                 //Si codigo de error != 20x entonces obtenemos el errorStream si no el inputstream
@@ -275,7 +268,6 @@ public class HttpManager {
 
                 if (this.bReader != null) {
                     serverMessage = HttpManagerUtils.frombufferReader(this.bReader);
-                    log.debug(TAG + " -> " + "Respuesta del servidor: " + serverMessage);
                     //Si la peticion retornó error
                     if (!isSuccess) {
                         log.error(TAG + " -> " + "Not success answer from server");
@@ -289,10 +281,10 @@ public class HttpManager {
                         result = serverMessage;
                     } else if (this.isArrayResponse) {
                         result = HttpManagerConverterFactory.DeserializeArray(responseClass, serverMessage);
-                        log.debug(TAG + " -> " + "Tipo de dato a retornar: List<" + ((Class) responseClass).getName() + ">");
+//                        log.debug(TAG + " -> " + "Tipo de dato a retornar: List<" + ((Class) responseClass).getName() + ">");
                     } else {
                         result = HttpManagerConverterFactory.DeserializeObject(responseClass, serverMessage);
-                        log.debug(TAG + " -> " + "Tipo de dato a retornar: " + ((Class) responseClass).getName());
+//                        log.debug(TAG + " -> " + "Tipo de dato a retornar: " + ((Class) responseClass).getName());
                     }
                 }
             }
@@ -312,7 +304,7 @@ public class HttpManager {
         }
         this.RequestHeaders.put(key, value);
 
-        log.debug(TAG + " -> " + "Agregando header: " + key + " valor:" + value);
+//        log.debug(TAG + " -> " + "Agregando header: " + key + " valor:" + value);
         return this;
     }
 
@@ -321,11 +313,10 @@ public class HttpManager {
         try {
             //Si no se especificó url, finalizamos la peticion
             if (HttpManagerUtils.isEmpty(this.url)) {
-                throw new HttpManagerInternalException("Url Param not defined");
+                throw new HttpManagerInternalException("Url Parameter is not defined");
             }
-
             //Si hay parametros y es una peticion GET, armamos la url
-            if (this.params != null && method == this.GET) {
+            if (this.params != null && this.GET.equals(method)) {
                 if (this.url.contains("?")) {
                     this.url += HttpManagerUtils.convertParamsToValue(params);
                 } else {
