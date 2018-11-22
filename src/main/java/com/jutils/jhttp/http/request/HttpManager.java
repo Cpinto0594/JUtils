@@ -172,6 +172,12 @@ public class HttpManager {
         }
         log.debug(TAG + " -> " + "Finalizando petición; Disconnecting Connection");
         this.httpConnection.disconnect();
+
+        if (exp != null) {
+            log.debug(TAG + " -> Throwing Exception");
+            throw new RuntimeException(exp);
+        }
+
         return resultObject;
     }
 
@@ -434,7 +440,7 @@ public class HttpManager {
             _StaticRequestHeaders = new HashMap<>();
         }
         _StaticRequestHeaders.put(key, value);
-        LoggerFactory.getLogger(HttpManager.class).debug(TAG + " -> " + "Agregando header: " + key);
+//        LoggerFactory.getLogger(HttpManager.class).debug(TAG + " -> " + "Agregando header: " + key);
     }
 
     public static void deleteRequestHeader(String key) {
@@ -443,7 +449,7 @@ public class HttpManager {
             return;
         }
         _StaticRequestHeaders.remove(key);
-        LoggerFactory.getLogger(HttpManager.class).debug(TAG + " -> " + "Eliminando header: " + key);
+//        LoggerFactory.getLogger(HttpManager.class).debug(TAG + " -> " + "Eliminando header: " + key);
     }
 
     //Setters and Getters
