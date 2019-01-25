@@ -104,7 +104,7 @@ public class HttpManager {
         return this;
     }
 
-    //PUR Method
+    //PUT Method
     public HttpManager put() {
         service(this.PUT, null);
         return this;
@@ -133,7 +133,12 @@ public class HttpManager {
     }
 
     public HttpManager setTimeOutTime(int value) {
-        TIME_OUT = value;
+        HttpManager.TIME_OUT = value;
+        return this;
+    }
+
+    public HttpManager setProtocol(String protocol) {
+        HttpManager.protocol = protocol;
         return this;
     }
 
